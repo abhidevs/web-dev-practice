@@ -27,3 +27,11 @@ function handleSubmit(e) {
     emailInput.value = "";
   }
 }
+
+
+// Read the localstorage data and show on frontend on page load
+let storedUser = JSON.parse(localStorage.getItem('user'));
+let userInfoString = `Existing user<br> name: ${storedUser.name}<br> email: ${storedUser.email}`;
+let h4 = document.createElement('h4');
+h4.innerHTML = userInfoString;
+myForm.insertBefore(h4, myForm.firstChild);
