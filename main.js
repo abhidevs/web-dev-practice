@@ -3,6 +3,8 @@ const nameInput = document.querySelector("#name");
 const emailInput = document.querySelector("#email");
 const msg = document.querySelector(".msg");
 
+window.addEventListener("DOMContentLoaded", loadUsers);
+
 myForm.addEventListener("submit", handleSubmit);
 
 function handleSubmit(e) {
@@ -20,7 +22,8 @@ function handleSubmit(e) {
       email: emailInput.value,
     };
 
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("userDetails" + user.email, JSON.stringify(user));
+    addNewUser(user);
 
     // Clear the form
     nameInput.value = "";
@@ -28,10 +31,40 @@ function handleSubmit(e) {
   }
 }
 
-
 // Read the localstorage data and show on frontend on page load
-let storedUser = JSON.parse(localStorage.getItem('user'));
-let userInfoString = `Existing user<br> name: ${storedUser.name}<br> email: ${storedUser.email}`;
-let h4 = document.createElement('h4');
-h4.innerHTML = userInfoString;
-myForm.insertBefore(h4, myForm.firstChild);
+function loadUsers() {
+  console.log(Object.keys(localStorage));
+  Object.keys(localStorage).forEach((item) => {
+    if (item.match(/userDetails/g)) {
+      addNewUser(JSON.parse(localStorage.getItem(item)));
+    }
+  });
+}
+
+function addNewUser(details) {
+  console.log(details);
+  let userList = document.getElementById("users");
+  let userInfoString = `${details.name} ${details.email} `;
+  const li = document.createElement("li");
+  li.appendChild(document.createTextNode(userInfoString));
+
+  const editBtn = document.createElement("input");
+  editBtn.id = "edit";
+  editBtn.type = "button";
+  editBtn.value = "edit";
+  editBtn.className = "delete";
+  editBtn.style.border = "2px solid green";
+
+  li.appendChild(editBtn);
+
+  const deleteBtn = document.createElement("input");
+  deleteBtn.type = "button";
+  deleteBtn.value = "delete";
+  deleteBtn.className = "delete";
+  deleteBtn.style.border = "2px solid red";
+
+  li.appendChild(deleteBtn);
+
+  console.log(li);
+  userList.appendChild(li);
+}
