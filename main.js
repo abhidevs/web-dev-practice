@@ -22,6 +22,11 @@ function handleSubmit(e) {
       email: emailInput.value,
     };
 
+
+    if(localStorage.getItem("userDetails" + user.email)) {
+      removeItemFromScreen(user.email);
+    }
+
     localStorage.setItem("userDetails" + user.email, JSON.stringify(user));
     addNewUser(user);
 
@@ -55,6 +60,13 @@ function addNewUser(details) {
   editBtn.className = "delete";
   editBtn.style.border = "2px solid green";
 
+  editBtn.addEventListener("click", () => {
+    console.log(details);
+    document.getElementById("name").value = details.name;
+    document.getElementById("email").value = details.email;
+    li.remove();
+  });
+
   li.appendChild(editBtn);
 
   const deleteBtn = document.createElement("input");
@@ -63,8 +75,19 @@ function addNewUser(details) {
   deleteBtn.className = "delete";
   deleteBtn.style.border = "2px solid red";
 
+  deleteBtn.addEventListener("click", () => {
+    localStorage.removeItem("userDetails" + details.email);
+    li.remove();
+  });
+
   li.appendChild(deleteBtn);
+  li.id = "user-" + details.email;
 
   console.log(li);
   userList.appendChild(li);
+}
+
+function removeItemFromScreen(email) {
+  const itemToBeRemoved = document.getElementById("user-" + email);
+  if(itemToBeRemoved) itemToBeRemoved.remove();
 }
