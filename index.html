@@ -4,11 +4,49 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Currying in JS</title>
+    <title>Expense Tracker</title>
   </head>
   <body>
-    <h1>Hello Currying</h1>
+    <form id="addForm">
+      <label for="examount">Enter expense amount</label>
+      <input id="examount" type="number" autofocus />
 
-    <script src="./script.js"></script>
+      <label for="exdesc">Enter description</label>
+      <input id="exdesc" type="text" />
+
+      <label for="excategory">Choose a category</label>
+      <select id="excategory">
+        <option value="">Select Category</option>
+        <option value="food">Food</option>
+        <option value="clothes">Clothes</option>
+        <option value="investment">Investment</option>
+        <option value="movie">Movie</option>
+      </select>
+
+      <input type="submit" value="Add expense" />
+    </form>
+
+    <ul id="expenseList"></ul>
+
+    <form id="editForm" style="display: none">
+      <label for="editamount">Enter expense amount</label>
+      <input id="editamount" type="number" autofocus />
+
+      <label for="editdesc">Enter description</label>
+      <input id="editdesc" type="text" />
+
+      <label for="editcategory">Choose a category</label>
+      <select id="editcategory">
+        <option value="">Select Category</option>
+        <option value="food">Food</option>
+        <option value="clothes">Clothes</option>
+        <option value="investment">Investment</option>
+        <option value="movie">Movie</option>
+      </select>
+
+      <input type="submit" value="Update expense" />
+    </form>
+
+    <script src="script.js"></script>
   </body>
 </html>
