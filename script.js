@@ -1,87 +1,59 @@
-document.getElementById("addForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  console.log(e);
-  let amount = document.getElementById("examount").value;
-  let desc = document.getElementById("exdesc").value;
-  let category = document.getElementById("excategory").value;
+console.log("Person1: shows ticket");
+console.log("Person2: shows ticket");
 
-  let allExpenses = JSON.parse(localStorage.getItem("all_expenses")) || [];
-  let id = new Date().getTime();
-  allExpenses.push({ id, amount, desc, category });
-  localStorage.setItem("all_expenses", JSON.stringify(allExpenses));
+// Using Promises without Async await
+// const promiseWifeBringingTicks = new Promise((resolve, reject) => {
+//   setTimeout(() => {
+//     resolve("ticket");
+//   }, 3000);
+// });
 
-  document.getElementById("addForm").reset();
-  printAllExpenses();
-});
+// const getPopcorn = promiseWifeBringingTicks.then((t) => {
+//   console.log("wife: I have the ticks");
+//   console.log("husband: we should go in");
+//   console.log("wife: no I am hungry");
 
+//   return new Promise((resolve, reject) => resolve(`${t} popcorn`));
+// });
 
-function printAllExpenses() {
-  const expenseList = document.querySelector("#expenseList");
-  let allExpenses = JSON.parse(localStorage.getItem("all_expenses")) || [];
-  expenseList.innerHTML = "";
-  console.log(allExpenses);
+// const getButter = getPopcorn.then((t) => {
+//   console.log("husband: I got some popcorn");
+//   console.log("husband: we should go in");
+//   console.log("wife: I need butter on my popcorn");
+//   return new Promise((resolve, reject) => resolve(`${t} butter`));
+// });
 
-  allExpenses.forEach((expense) => {
-    let li = document.createElement("li");
-    li.innerHTML = `${expense.amount} - ${expense.category} - ${expense.desc} `;
+// getButter.then((t) => console.log(t));
 
-    let deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML = "Delete Expense";
-    deleteBtn.addEventListener("click", () => deleteExpense(expense.id));
-    li.append(deleteBtn);
-    li.append(" ");
-
-    let editBtn = document.createElement("button");
-    editBtn.innerHTML = "Edit Expense";
-    editBtn.addEventListener("click", () => editExpense(expense.id));
-    li.append(editBtn);
-
-    expenseList.appendChild(li);
+// With Async await
+const preMovie = async () => {
+  const promiseWifeBringingTicks = new Promise((resolve, reject) => {
+    setTimeout(() => resolve("ticket"), 3000);
   });
-}
 
+  const getPopcorn = new Promise((resolve, reject) => resolve("popcorn"));
+  const getButter = new Promise((resolve, reject) => resolve("butter"));
 
-function deleteExpense(id) {
-  let allExpenses = JSON.parse(localStorage.getItem("all_expenses")) || [];
-  let newArr = allExpenses.filter((expense) => expense.id !== id);
-  localStorage.setItem("all_expenses", JSON.stringify(newArr));
-  printAllExpenses();
-}
+  let ticket = await promiseWifeBringingTicks;
+  console.log(`wife: I have the ${ticket}`);
+  console.log("husband: we should go in");
+  console.log("wife: no I am hungry");
 
+  let popcorn = await getPopcorn;
+  console.log(`husband: I got some ${popcorn}`);
+  console.log("husband: we should go in");
+  console.log("wife: I need butter on my popcorn");
 
-function editExpense(id) {
-  let allExpenses = JSON.parse(localStorage.getItem("all_expenses")) || [];
-  let expenseToEdit = allExpenses.filter((expense) => expense.id === id)[0];
-  console.log(expenseToEdit);
+  let butter = await getButter;
+  console.log(`husband: I got some ${butter} on popcorn`);
+  console.log("husband: Anything else darling?");
+  console.log("wife: let go we are getting late");
+  console.log("husband: thank you for the reminder");
 
-  const editForm = document.getElementById("editForm");
-  const editAmount = document.getElementById("editamount");
-  const editDesc = document.getElementById("editdesc");
-  const editCategory = document.getElementById("editcategory");
+  return ticket;
+};
 
-  editAmount.value = expenseToEdit.amount;
-  editDesc.value = expenseToEdit.desc;
-  editCategory.value = expenseToEdit.category;
-  editForm.style.display = "block";
-  document.getElementById("editamount").focus();
+preMovie().then((t) => console.log(`Person3: shows ${t}`));
 
-  editForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    let amount = editAmount.value;
-    let desc = editDesc.value;
-    let category = editCategory.value;
-
-    const newArr = allExpenses.map((expense) => {
-      if (expense.id === id) return { id, amount, desc, category };
-      else return expense;
-    });
-
-    localStorage.setItem("all_expenses", JSON.stringify(newArr));
-    editForm.reset();
-    editForm.style.display = "none";
-    printAllExpenses();
-  });
-}
-
-
-printAllExpenses();
+console.log("Person4: shows ticket");
+console.log("Person5: shows ticket");
