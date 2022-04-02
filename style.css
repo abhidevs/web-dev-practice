@@ -59,6 +59,22 @@
     border-radius: 5px;
     margin: 5px 0;
   }
+
+  .editBtn {
+    padding: 3px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 0 5px;
+    border: 2px solid green;
+  }
+
+  .deleteBtn {
+    padding: 3px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 0 5px;
+    border: 2px solid red;
+  }
   
   .btn:hover {
     background: #444;

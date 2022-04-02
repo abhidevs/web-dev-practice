@@ -11,7 +11,11 @@ myForm.addEventListener("submit", handleSubmit);
 function handleSubmit(e) {
   e.preventDefault();
 
-  if (nameInput.value === "" || emailInput.value === "" || phoneInput.value === "") {
+  if (
+    nameInput.value === "" ||
+    emailInput.value === "" ||
+    phoneInput.value === ""
+  ) {
     msg.style.display = "block";
     msg.classList.add("error");
     msg.innerHTML = "Please fill all the fields";
@@ -72,12 +76,10 @@ function addNewUser(details) {
   li.appendChild(document.createTextNode(userInfoString));
 
   // Editing users and updating on crudcrud is not yet implemented
-  const editBtn = document.createElement("input");
+  const editBtn = document.createElement("button");
   editBtn.id = "edit";
-  editBtn.type = "button";
-  editBtn.value = "edit";
-  editBtn.className = "delete";
-  editBtn.style.border = "2px solid green";
+  editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
+  editBtn.className = "editBtn";
 
   editBtn.addEventListener("click", () => {
     console.log(details);
@@ -91,15 +93,20 @@ function addNewUser(details) {
   li.append(" ");
 
   // Deleting users and removing from crudcrud is not yet implemented
-  const deleteBtn = document.createElement("input");
-  deleteBtn.type = "button";
-  deleteBtn.value = "delete";
-  deleteBtn.className = "delete";
-  deleteBtn.style.border = "2px solid red";
+  const deleteBtn = document.createElement("button");
+  deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+  deleteBtn.className = "deleteBtn";
 
   deleteBtn.addEventListener("click", () => {
-    localStorage.removeItem("userDetails" + details.email);
-    li.remove();
+    axios
+      .delete(
+        `https://crudcrud.com/api/9c57eee8501b48999f10394635b1f8c5/appointment/${details._id}`
+      )
+      .then((res) => li.remove())
+      .catch((err) => {
+        console.error(err);
+        alert("Something went wrong while deleting user");
+      });
   });
 
   li.appendChild(deleteBtn);
