@@ -2,6 +2,7 @@ const myForm = document.querySelector("#my-form");
 const nameInput = document.querySelector("#name");
 const emailInput = document.querySelector("#email");
 const phoneInput = document.querySelector("#phone");
+const userIdInput = document.querySelector("#userId");
 const msg = document.querySelector(".msg");
 
 window.addEventListener("DOMContentLoaded", loadUsers);
@@ -27,28 +28,48 @@ function handleSubmit(e) {
       email: emailInput.value,
       phone: phoneInput.value,
     };
+    let userId = userIdInput.value;
 
-    axios
-      .post(
-        "https://crudcrud.com/api/9c57eee8501b48999f10394635b1f8c5/appointment",
-        user
-      )
-      .then((res) => {
-        console.log(res);
-        addNewUser(res.data);
-      })
-      .catch((err) => {
-        console.error(err);
-        msg.style.display = "block";
-        msg.classList.add("error");
-        msg.innerHTML = "Something went wrong";
-        setTimeout(() => (msg.style.display = "none"), 3000);
-      });
+    // When we click on the edit icon I am setting the hidden input's(userIdInput's) value to the _id of the user
+    // So now if the userIdInput's value is not empty means we clicked edit button, so I am making axios GET or PUT request according to that
+    if (userId === "") {
+      axios
+        .post(
+          "https://crudcrud.com/api/9c57eee8501b48999f10394635b1f8c5/appointment",
+          user
+        )
+        .then((res) => {
+          console.log(res);
+          addNewUser(res.data);
+        })
+        .catch((err) => {
+          console.error(err);
+          msg.style.display = "block";
+          msg.classList.add("error");
+          msg.innerHTML = "Something went wrong";
+          setTimeout(() => (msg.style.display = "none"), 3000);
+        });
+    } else {
+      axios
+        .put(
+          `https://crudcrud.com/api/9c57eee8501b48999f10394635b1f8c5/appointment/${userId}`,
+          user
+        )
+        .then((res) => addNewUser({ ...user, _id: userId }))
+        .catch((err) => {
+          console.error(err);
+          msg.style.display = "block";
+          msg.classList.add("error");
+          msg.innerHTML = "Something went wrong";
+          setTimeout(() => (msg.style.display = "none"), 3000);
+        });
+    }
 
     // Clear the form
     nameInput.value = "";
     emailInput.value = "";
     phoneInput.value = "";
+    userIdInput.value = "";
   }
 }
 
@@ -86,6 +107,7 @@ function addNewUser(details) {
     document.getElementById("name").value = details.name;
     document.getElementById("email").value = details.email;
     document.getElementById("phone").value = details.phone;
+    document.getElementById("userId").value = details._id;
     li.remove();
   });
 
