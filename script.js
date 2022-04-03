@@ -1,67 +1,83 @@
 document.getElementById("addForm").addEventListener("submit", (e) => {
   e.preventDefault();
-  console.log(e);
   let amount = document.getElementById("examount").value;
   let desc = document.getElementById("exdesc").value;
   let category = document.getElementById("excategory").value;
 
-  let allExpenses = JSON.parse(localStorage.getItem("all_expenses")) || [];
-  let id = new Date().getTime();
-  allExpenses.push({ id, amount, desc, category });
-  localStorage.setItem("all_expenses", JSON.stringify(allExpenses));
+  axios
+    .post(
+      "https://crudcrud.com/api/fd79ac7b56c2479cb58be5d7fcf56583/expenses",
+      { amount, desc, category }
+    )
+    .then((res) => addExpenseToList(res.data))
+    .catch((err) => {
+      alert(err);
+      console.error(err);
+    });
 
   document.getElementById("addForm").reset();
-  printAllExpenses();
 });
 
-
 function printAllExpenses() {
-  const expenseList = document.querySelector("#expenseList");
-  let allExpenses = JSON.parse(localStorage.getItem("all_expenses")) || [];
-  expenseList.innerHTML = "";
-  console.log(allExpenses);
-
-  allExpenses.forEach((expense) => {
-    let li = document.createElement("li");
-    li.innerHTML = `${expense.amount} - ${expense.category} - ${expense.desc} `;
-
-    let deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML = "Delete Expense";
-    deleteBtn.addEventListener("click", () => deleteExpense(expense.id));
-    li.append(deleteBtn);
-    li.append(" ");
-
-    let editBtn = document.createElement("button");
-    editBtn.innerHTML = "Edit Expense";
-    editBtn.addEventListener("click", () => editExpense(expense.id));
-    li.append(editBtn);
-
-    expenseList.appendChild(li);
-  });
+  axios
+    .get("https://crudcrud.com/api/fd79ac7b56c2479cb58be5d7fcf56583/expenses")
+    .then((res) => {
+      res.data.forEach((expense) => addExpenseToList(expense));
+    })
+    .catch((err) => {
+      alert(err);
+      console.error(err);
+    });
 }
 
+function addExpenseToList(expense) {
+  const expenseList = document.querySelector("#expenseList");
+  let li = document.createElement("li");
+  li.id = expense._id;
+  li.innerHTML = `${expense.amount} - ${expense.category} - ${expense.desc} `;
+
+  let deleteBtn = document.createElement("button");
+  deleteBtn.innerHTML = "Delete Expense";
+  deleteBtn.addEventListener("click", () => deleteExpense(expense._id));
+  li.append(deleteBtn);
+  li.append(" ");
+
+  let editBtn = document.createElement("button");
+  editBtn.innerHTML = "Edit Expense";
+  editBtn.addEventListener("click", () => editExpense(expense));
+  li.append(editBtn);
+
+  expenseList.appendChild(li);
+}
 
 function deleteExpense(id) {
-  let allExpenses = JSON.parse(localStorage.getItem("all_expenses")) || [];
-  let newArr = allExpenses.filter((expense) => expense.id !== id);
-  localStorage.setItem("all_expenses", JSON.stringify(newArr));
-  printAllExpenses();
+  axios
+    .delete(
+      `https://crudcrud.com/api/fd79ac7b56c2479cb58be5d7fcf56583/expenses/${id}`
+    )
+    .then((res) => removeExpenseFromList(id))
+    .catch((err) => {
+      alert(err);
+      console.error(err);
+    });
 }
 
+function removeExpenseFromList(id) {
+  const expense = document.getElementById(`${id}`);
+  if (expense) expense.remove();
+}
 
-function editExpense(id) {
-  let allExpenses = JSON.parse(localStorage.getItem("all_expenses")) || [];
-  let expenseToEdit = allExpenses.filter((expense) => expense.id === id)[0];
-  console.log(expenseToEdit);
+function editExpense(expense) {
+  removeExpenseFromList(expense._id);
 
   const editForm = document.getElementById("editForm");
   const editAmount = document.getElementById("editamount");
   const editDesc = document.getElementById("editdesc");
   const editCategory = document.getElementById("editcategory");
 
-  editAmount.value = expenseToEdit.amount;
-  editDesc.value = expenseToEdit.desc;
-  editCategory.value = expenseToEdit.category;
+  editAmount.value = expense.amount;
+  editDesc.value = expense.desc;
+  editCategory.value = expense.category;
   editForm.style.display = "block";
   document.getElementById("editamount").focus();
 
@@ -70,18 +86,22 @@ function editExpense(id) {
     let amount = editAmount.value;
     let desc = editDesc.value;
     let category = editCategory.value;
+    const updatedExpense = { amount, desc, category };
 
-    const newArr = allExpenses.map((expense) => {
-      if (expense.id === id) return { id, amount, desc, category };
-      else return expense;
-    });
+    axios
+      .put(
+        `https://crudcrud.com/api/fd79ac7b56c2479cb58be5d7fcf56583/expenses/${expense._id}`,
+        updatedExpense
+      )
+      .then((res) => addExpenseToList({ ...updatedExpense, _id: expense._id }))
+      .catch((err) => {
+        alert(err);
+        console.error(err);
+      });
 
-    localStorage.setItem("all_expenses", JSON.stringify(newArr));
     editForm.reset();
     editForm.style.display = "none";
-    printAllExpenses();
   });
 }
-
 
 printAllExpenses();
