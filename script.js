@@ -57,6 +57,26 @@ class BST {
       if (!cur && st.length) cur = st.pop();
     }
   }
+
+  getMin(node = this.root) {
+    if (!node) {
+      console.log("BST is empty");
+      return -1;
+    }
+
+    if (!node.left) return node.data;
+    return this.getMin(node.left);
+  }
+
+  getMax(node = this.root) {
+    if (!node) {
+      console.log("BST is empty");
+      return -1;
+    }
+
+    if (!node.right) return node.data;
+    return this.getMax(node.right);
+  }
 }
 
 const bst1 = new BST();
@@ -80,3 +100,12 @@ bst1.preorder(root);
 
 console.log("Preorder traversal of BST using Iteration");
 bst1.preorderIterative(root);
+
+console.log(`Minimum element in BST: ${bst1.getMin()}`);
+bst1.insert(2);
+console.log(`Minimum element in BST: ${bst1.getMin()}`);
+
+console.log(`Maximum element in BST: ${bst1.getMax()}`);
+bst1.insert(32);
+bst1.insert(36);
+console.log(`Maximum element in BST: ${bst1.getMax()}`);
