@@ -5,6 +5,8 @@ const phoneInput = document.querySelector("#phone");
 const userIdInput = document.querySelector("#userId");
 const msg = document.querySelector(".msg");
 
+const backendAPI = "http://localhost:3000";
+
 window.addEventListener("DOMContentLoaded", loadUsers);
 
 myForm.addEventListener("submit", handleSubmit);
@@ -30,14 +32,11 @@ function handleSubmit(e) {
     };
     let userId = userIdInput.value;
 
-    // When we click on the edit icon I am setting the hidden input's(userIdInput's) value to the _id of the user
+    // When we click on the edit icon I am setting the hidden input's(userIdInput's) value to the id of the user
     // So now if the userIdInput's value is not empty means we clicked edit button, so I am making axios GET or PUT request according to that
     if (userId === "") {
       axios
-        .post(
-          "https://crudcrud.com/api/9c57eee8501b48999f10394635b1f8c5/appointment",
-          user
-        )
+        .post(`${backendAPI}/addnewusers`, user)
         .then((res) => {
           console.log(res);
           addNewUser(res.data);
@@ -51,11 +50,8 @@ function handleSubmit(e) {
         });
     } else {
       axios
-        .put(
-          `https://crudcrud.com/api/9c57eee8501b48999f10394635b1f8c5/appointment/${userId}`,
-          user
-        )
-        .then((res) => addNewUser({ ...user, _id: userId }))
+        .put(`${backendAPI}/updateuser/${userId}`, user)
+        .then((res) => addNewUser({ ...user, id: userId }))
         .catch((err) => {
           console.error(err);
           msg.style.display = "block";
@@ -76,9 +72,7 @@ function handleSubmit(e) {
 // Read the data from crudcrud and show on frontend on page load
 function loadUsers() {
   axios
-    .get(
-      "https://crudcrud.com/api/9c57eee8501b48999f10394635b1f8c5/appointment"
-    )
+    .get(`${backendAPI}/getusers`)
     .then((res) => {
       console.log(res);
       res.data.forEach((item) => addNewUser(item));
@@ -107,7 +101,7 @@ function addNewUser(details) {
     document.getElementById("name").value = details.name;
     document.getElementById("email").value = details.email;
     document.getElementById("phone").value = details.phone;
-    document.getElementById("userId").value = details._id;
+    document.getElementById("userId").value = details.id;
     li.remove();
   });
 
@@ -121,9 +115,7 @@ function addNewUser(details) {
 
   deleteBtn.addEventListener("click", () => {
     axios
-      .delete(
-        `https://crudcrud.com/api/9c57eee8501b48999f10394635b1f8c5/appointment/${details._id}`
-      )
+      .delete(`${backendAPI}/deleteuser/${details.id}`)
       .then((res) => li.remove())
       .catch((err) => {
         console.error(err);
